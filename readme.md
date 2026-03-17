@@ -6,7 +6,7 @@ It is built with **React, TypeScript, and Vite** to provide a fast, responsive, 
 
 ---
 
-## 🚀 Features
+## Features
 
 - **Google OAuth Integration**: Seamless and secure user authentication via Google.
 - **Content Dashboard**: A clean interface to view and manage your saved content.
@@ -18,7 +18,7 @@ It is built with **React, TypeScript, and Vite** to provide a fast, responsive, 
 
 ---
 
-## 💻 Tech Stack
+## Tech Stack
 
 - **Framework**: React 18
 - **Build Tool**: Vite
@@ -32,7 +32,7 @@ It is built with **React, TypeScript, and Vite** to provide a fast, responsive, 
 
 ---
 
-## 🛠️ Prerequisites
+## Prerequisites
 
 Make sure you have the following installed on your machine:
 
@@ -41,30 +41,30 @@ Make sure you have the following installed on your machine:
 
 ---
 
-## 🚦 Getting Started
+## Getting Started
 
 Follow these steps to set up the project locally.
 
 ### 1. Clone the repository
 
-`ash
+```bash
 git clone https://github.com/ashishkr45/Synapse-client.git
 cd synapse-client
-`
+```
 
 ### 2. Install dependencies
 
-`ash
+```bash
 npm install
-`
+```
 
 ### 3. Environment Configuration
 
 Create a \.env\ file in the root directory based on \.env.example\.
 
-`ash
+```bash
 cp .env.example .env
-`
+```
 
 You will need to configure the following environment variables:
 
@@ -75,30 +75,26 @@ You will need to configure the following environment variables:
 
 ### 4. Run the development server
 
-`ash
+```bash
 npm run dev
-`
+```
 
 The application will be available at \http://localhost:5173\.
 
 ---
 
-## 📜 Scripts
+## Scripts
 
-- **\
-pm run dev\**: Starts the development server with Hot Module Replacement (HMR).
-- **\
-pm run build\**: Builds the application for production to the \dist\ folder.
-- **\
-pm run preview\**: Locally preview the production build.
-- **\
-pm run lint\**: Runs ESLint to check for code quality issues.
+- **npm run dev**: Starts the development server with Hot Module Replacement (HMR).
+- **npm run build**: Builds the application for production to the \dist\ folder.
+- **npm run preview**: Locally preview the production build.
+- **npm run lint**: Runs ESLint to check for code quality issues.
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
-`ash
+```
 src/
 ├── assets/          # Static assets (images, logos)
 ├── components/      # Reusable UI components
@@ -111,11 +107,11 @@ src/
 │   └── embedId.ts   # Utilities for parsing media URLs
 ├── App.tsx          # Main application component & routing
 └── main.tsx         # Application entry point
-`
+```
 
 ---
 
-## 🤝 Contributing
+## ontributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -127,6 +123,6 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
