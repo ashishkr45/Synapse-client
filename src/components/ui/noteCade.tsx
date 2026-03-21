@@ -7,9 +7,10 @@ interface NoteCardProps {
   time: Date | string;
   notes: string | undefined;
   isDarkMode: boolean;
+  onDelete?: () => void;
 }
 
-export const NoteCard = ({ title, tags, time, notes, isDarkMode }: NoteCardProps) => {
+export const NoteCard = ({ title, tags, time, notes, isDarkMode, onDelete }: NoteCardProps) => {
   const getTagColor = (index: number) => {
     const colors = isDarkMode ? darkPastelColors : lightPastelColors;
     return colors[index % colors.length];
@@ -24,7 +25,6 @@ export const NoteCard = ({ title, tags, time, notes, isDarkMode }: NoteCardProps
       } break-inside-avoid rounded-xl border shadow-sm hover:shadow-2xl transition-all duration-300 w-full mb-4`}
     >
       <div className="p-4">
-        {/* Header */}
         <div className="flex justify-between items-start mb-3">
           <div className="flex items-center gap-2">
             <div
@@ -47,13 +47,12 @@ export const NoteCard = ({ title, tags, time, notes, isDarkMode }: NoteCardProps
             <button className="p-1.5 hover:bg-gray-700/20 rounded">
               <ShareIcon size="md" color={isDarkMode ? "#a1a1aa" : "#6b7280"} />
             </button>
-            <button className="p-1.5 hover:bg-gray-700/20 rounded">
-              <DeleteIcon size="md" color={isDarkMode ? "#a1a1aa" : "#6b7280"} />
+            <button onClick={onDelete} className="p-1.5 hover:bg-gray-700/20 rounded">
+              <DeleteIcon  size="md" color={isDarkMode ? "#a1a1aa" : "#6b7280"} />
             </button>
           </div>
         </div>
 
-        {/* Notes Body */}
         <div
           className={`text-sm mb-4 leading-relaxed whitespace-pre-line ${
             isDarkMode ? "text-gray-300" : "text-gray-700"
@@ -61,8 +60,6 @@ export const NoteCard = ({ title, tags, time, notes, isDarkMode }: NoteCardProps
         >
           {notes?.trim() ? notes : <span className="italic text-gray-400">No notes added...</span>}
         </div>
-
-        {/* Footer */}
         <div className="space-y-2">
           {tags && tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5">

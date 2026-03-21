@@ -197,7 +197,7 @@ const renderEmbed = (
 };
 
 export const MediaEmbedCard = (props: MediaCardProps) => {
-  const { title, tags, time, url, mediaType, isDarkMode } = props;
+  const { title, tags, time, url, mediaType, isDarkMode, onDelete } = props;
   const { icon: IconComponent, iconBg, unavailableText } =
     getMediaConfig(mediaType);
 
@@ -243,6 +243,7 @@ export const MediaEmbedCard = (props: MediaCardProps) => {
             </button>
 
             <button
+              onClick={onDelete}
               className={`p-1.5 rounded transition-all duration-200 flex items-center justify-center
                 ${isDarkMode
                   ? "hover:bg-red-900/40 hover:scale-110 hover:text-red-400"
@@ -297,7 +298,7 @@ export const MediaEmbedCard = (props: MediaCardProps) => {
   );
 };
 
-// Legacy exports (still work)
+// Legacy exports
 export const YouTubeCard = (props: CardProps) => (
   <MediaEmbedCard {...props} mediaType="youtube" />
 );
