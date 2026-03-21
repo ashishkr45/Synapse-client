@@ -1,57 +1,13 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { z } from 'zod';
+import toast from 'react-hot-toast';
+import { fetchUserContent, createNewContent, deleteContent, shareContent, ContentFormData } from '../utility/contentApi';
+
 import { Card } from '../components/ui/spaceCard';
 import CreateContentModel from '../components/createContentModel';
 import DashNavigation from '../components/dashNevBar';
 import { CardSkeleton } from '../components/ui/CardSkeleton';
 import { DeleteConfirmationModal } from '../components/ui/deleteConfirmationModel';
-import toast from 'react-hot-toast';
-
-const contentFormSchema = z.object({
-  type: z.enum([
-    "article", "tweet", "link", "document", "youtube", 
-    "code", "thread", "note", "quote", "event", 
-    "bookmark", "post", "reel",
-  ]),
-  title: z.string(),
-  link: z.string().optional(),
-  note: z.string().optional(),
-  tags: z.array(z.string()),
-});
-export type ContentFormData = z.infer<typeof contentFormSchema>;
-
-
-const fetchUserContent = async () => {
-  const token = localStorage.getItem('app_token');
-  if (!token) throw new Error("Authentication token not found,!");
-
-  const response = await axios.get('http://localhost:3000/api/content/board', {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data.content;
-};
-
-const createNewContent = async (newContentData: ContentFormData) => {
-  const token = localStorage.getItem('app_token');
-  if (!token) throw new Error("No authorization token found.");
-
-  const response = await axios.post('http://localhost:3000/api/content/board', newContentData, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
-};
-
-const deleteContent = async (id: string) => {
-  const token = localStorage.getItem('app_token');
-  if (!token) throw new Error("No authorization token found.");
-  console.log('[deleteContent] id:', id);
-
-  await axios.delete(`http://localhost:3000/api/content/board/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-};
 
 interface DashboardProps {
   isDarkMode: boolean;
@@ -78,10 +34,6 @@ function Dashboard({ isDarkMode, toggleDarkMode }: DashboardProps) {
       toast.error('Failed to save content');
     }
   });
-  
-  const handleCreateContent = (data: ContentFormData) => {
-    createContentMutation.mutate(data);
-  };
 
   const deleteContentMutation = useMutation({
     mutationFn: deleteContent,
@@ -94,6 +46,10 @@ function Dashboard({ isDarkMode, toggleDarkMode }: DashboardProps) {
     }
   });
 
+  const handleCreateContent = (data: ContentFormData) => {
+    createContentMutation.mutate(data);
+  };
+
   const handleDeleteClick = (id: string) => {
     setContentToDelete(id);
   };
@@ -105,6 +61,18 @@ function Dashboard({ isDarkMode, toggleDarkMode }: DashboardProps) {
     }
   };
 
+  const handleShareClick = async (id: string) => {
+    console.log("Share button clicked for ID:", id);
+    try {
+      const data = await shareContent(id);      
+      const fullShareUrl = `${window.location.origin}${data.shareLink}`;
+            await navigator.clipboard.writeText(fullShareUrl);
+      toast.success("Link copied to clipboard!");
+    } catch (error: any) {
+      console.error("SHARE ERROR:", error);
+      toast.error(error.response?.data?.message || "Failed to generate link");
+    }
+  };
 
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-stone-900' : 'bg-[#eaeaea]'} transition-all ease-linear duration-300 pl-4 pr-4`}>
@@ -139,7 +107,6 @@ function Dashboard({ isDarkMode, toggleDarkMode }: DashboardProps) {
         
         {isError && <p className="text-red-500">Error fetching your content.</p>}
         
-        {/* EMPTY STATE */}
         {content && content.length === 0 && !isLoading && !isError && (
           <div className="flex flex-col items-center justify-center pt-20 pb-16 text-center">
             <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 border-2 ${isDarkMode ? 'border-gray-700 bg-gray-800/50' : 'border-gray-300 bg-gray-200/50'}`}>
@@ -162,7 +129,6 @@ function Dashboard({ isDarkMode, toggleDarkMode }: DashboardProps) {
           </div>
         )}
 
-        {/* CONTENT GRID */}
         {content && content.length > 0 && (
           <div className='columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 max-w-[95%] mx-auto'>
             {content.map((item: any) => (
@@ -184,9 +150,8 @@ function Dashboard({ isDarkMode, toggleDarkMode }: DashboardProps) {
                   notes={item.note}
                   url={item.link}
                   isDarkMode={isDarkMode}
-                  onDelete={() => {
-                    handleDeleteClick(item._id) 
-                  }}
+                  onDelete={() => handleDeleteClick(item._id)}
+                  onShare={() => handleShareClick(item._id)}
                 />
               </div>
             ))}
