@@ -7,6 +7,7 @@ import CreateContentModel from '../components/createContentModel';
 import DashNavigation from '../components/dashNevBar';
 import { CardSkeleton } from '../components/ui/CardSkeleton';
 import { DeleteConfirmationModal } from '../components/ui/deleteConfirmationModel';
+import toast from 'react-hot-toast';
 
 const contentFormSchema = z.object({
   type: z.enum([
@@ -71,7 +72,11 @@ function Dashboard({ isDarkMode, toggleDarkMode }: DashboardProps) {
     mutationFn: createNewContent,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userContent'] });
+      toast.success('Saved to Synapse');
     },
+    onError: () => {
+      toast.error('Failed to save content');
+    }
   });
   
   const handleCreateContent = (data: ContentFormData) => {
@@ -82,9 +87,10 @@ function Dashboard({ isDarkMode, toggleDarkMode }: DashboardProps) {
     mutationFn: deleteContent,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userContent'] });
+      toast.success('Item deleted');
     },
-    onError: (error) => {
-      console.error("DELETE ERROR:", error);
+    onError: () => {
+      toast.error('Failed to delete item');
     }
   });
 
@@ -95,7 +101,7 @@ function Dashboard({ isDarkMode, toggleDarkMode }: DashboardProps) {
   const confirmDelete = () => {
     if (contentToDelete) {
       deleteContentMutation.mutate(contentToDelete);
-      setContentToDelete(null); // Close the modal
+      setContentToDelete(null);
     }
   };
 
