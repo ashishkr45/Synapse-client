@@ -3,7 +3,7 @@ import { IconProps } from "../../icons";
 import { z } from "zod";
 import { MediaEmbedCard, MediaType } from "./mediaCard";
 import { extractEmbedType } from "../../utility/embedId";
-import { NoteCard } from "./noteCade";
+import { NoteCard } from "./noteCard";
 
 export const contentTypes = z.enum([
   "link",
@@ -24,6 +24,7 @@ export interface CardProps {
   url?: string;
   isDarkMode: boolean;
   onDelete?: () => void;
+  onShare?: () => void;
 }
 
 // Exported so other components (like CreateContentModel) can reuse this exact same palette
@@ -64,7 +65,7 @@ const typeIcons: Record<string, React.FC<IconProps>> = {
 };
 
 export const Card = (props: CardProps) => {
-  const { type, title, tags, time, url, notes, isDarkMode, onDelete } = props;
+  const { type, title, tags, time, url, notes, isDarkMode, onDelete, onShare } = props;
 
   // 1. Handle Notes
   if (type === "note") {
@@ -76,6 +77,7 @@ export const Card = (props: CardProps) => {
         notes={notes}
         isDarkMode={isDarkMode}
         onDelete={onDelete}
+        onShare={onShare}
       />
     );
   }
@@ -94,6 +96,7 @@ export const Card = (props: CardProps) => {
           mediaType={mediaType as MediaType}
           isDarkMode={isDarkMode}
           onDelete={onDelete}
+          onShare={onShare} 
         />
       );
     }
@@ -108,6 +111,7 @@ export const Card = (props: CardProps) => {
         isDarkMode={isDarkMode}
         isLink
         onDelete={onDelete}
+        onShare={onShare} 
       />
     );
   }
@@ -122,6 +126,7 @@ export const Card = (props: CardProps) => {
       content={notes || "No content available."}
       isDarkMode={isDarkMode}
       onDelete={props.onDelete} 
+      onShare={onShare} 
     />
   );
 };
@@ -135,6 +140,7 @@ interface DefaultCardProps {
   isDarkMode: boolean;
   isLink?: boolean;
   onDelete?: () => void;
+  onShare?: () => void;
 }
 
 const DefaultCard = ({
@@ -145,7 +151,8 @@ const DefaultCard = ({
   content,
   isDarkMode,
   isLink,
-  onDelete
+  onDelete,
+  onShare
 }: DefaultCardProps) => {
   
   const getTagColor = (index: number) => {
@@ -185,7 +192,15 @@ const DefaultCard = ({
             </h3>
           </div>
           <div className="flex items-center gap-1 flex-shrink-0">
-            <button className="p-1.5 hover:bg-gray-700/20 rounded transition-colors">
+            <button 
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (onShare) onShare();
+              }}
+              className="p-1.5 hover:bg-gray-700/20 rounded transition-colors"
+            >
               <ShareIcon size="md" color={isDarkMode ? "#a1a1aa" : "#6b7280"} />
             </button>
             <button 
