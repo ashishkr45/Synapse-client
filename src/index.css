@@ -1,1 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --color-apple-bg: #F5F5F7;
+  --color-apple-surface: #FFFFFF;
+  --color-apple-text: #1D1D1F;
+  --color-apple-text-muted: #86868B;
+  --color-apple-blue: #0066CC;
+  --color-apple-border: rgba(0, 0, 0, 0.08);
+
+  --color-apple-dark-bg: #000000;
+  --color-apple-dark-surface: #1C1C1E;
+  --color-apple-dark-text: #F5F5F7;
+  --color-apple-dark-text-muted: #86868B;
+  --color-apple-dark-blue: #0A84FF;
+  --color-apple-dark-border: rgba(255, 255, 255, 0.15);
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+
+  --shadow-apple-card: 0 4px 24px rgba(0, 0, 0, 0.04);
+  --shadow-apple-card-hover: 0 10px 40px rgba(0, 0, 0, 0.08);
+  --shadow-apple-dark-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.02em; 
+  }
+}
