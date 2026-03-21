@@ -69,7 +69,7 @@ export const PinterestIcon = ({ size, color = "#74777d" }: IconProps) => (
   </svg>
 );
 
-export const DeleteIcon = ({ size, color = "#6b7280" }: IconProps) => (
+export const DeleteIcon = ({ size }: IconProps) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
     fill="none" 

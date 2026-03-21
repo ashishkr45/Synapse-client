@@ -8,7 +8,7 @@ const SecBrainIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     x="0"
     y="0"
     viewBox="0 0 256 256"
-    enableBackground="new 0 0 256 256" // Moved to SVG attribute
+    enableBackground="new 0 0 256 256"
     xmlSpace="preserve"
     {...props}
   >
