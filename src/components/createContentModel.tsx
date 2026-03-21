@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CrossIcon, AddIcon, ChevronDownIcon } from "../icons/Icons";
-import { Button } from "./ui/button";
 import { z } from "zod";
 import { ContentFormData } from "../pages/dashboard";
 
@@ -11,8 +10,7 @@ interface CreateContentModelProps {
   onSubmit: (data: ContentFormData) => void;
 }
 
-// --- ZOD TYPES ---
-export const contentTypes = z.enum([
+const contentTypes = z.enum([
   "link",
   "code",
   "note",
@@ -22,8 +20,6 @@ export const contentTypes = z.enum([
 ]);
 type ContentType = z.infer<typeof contentTypes>;
 
-
-// --- MAIN COMPONENT ---
 const CreateContentModel = ({ open, onClose, isDarkMode, onSubmit }: CreateContentModelProps) => {
   const [selectedType, setSelectedType] = useState<ContentType | "">("");
   const [title, setTitle] = useState("");
@@ -32,23 +28,18 @@ const CreateContentModel = ({ open, onClose, isDarkMode, onSubmit }: CreateConte
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
+  
+  const [isAnimating, setIsAnimating] = useState(false);
 
-  const pastelColors = [
-    "bg-pink-100 text-pink-700 border-pink-200",
-    "bg-blue-100 text-blue-700 border-blue-200", 
-    "bg-green-100 text-green-700 border-green-200",
-    "bg-yellow-100 text-yellow-700 border-yellow-200",
-    "bg-purple-100 text-purple-700 border-purple-200",
-    "bg-indigo-100 text-indigo-700 border-indigo-200",
-    "bg-red-100 text-red-700 border-red-200",
-    "bg-orange-100 text-orange-700 border-orange-200",
-    "bg-teal-100 text-teal-700 border-teal-200",
-    "bg-cyan-100 text-cyan-700 border-cyan-200"
-  ];
-
-  const getTagColor = (index: number) => {
-    return pastelColors[index % pastelColors.length];
-  };
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => setIsAnimating(true), 10);
+    } else {
+      setIsAnimating(false);
+      document.body.style.overflow = 'unset';
+    }
+  }, [open]);
 
   const addTag = () => {
     if (currentTag.trim() && !tags.includes(currentTag.trim())) {
@@ -85,12 +76,11 @@ const CreateContentModel = ({ open, onClose, isDarkMode, onSubmit }: CreateConte
     onSubmit({
       type: selectedType as ContentType,
       title: title.trim(),
-      link: link ? link.trim() : undefined,
-      note: note ? note.trim() : undefined,
+      link: link.trim() ? link.trim() : undefined,
+      note: note.trim() ? note.trim() : undefined,
       tags: tags.filter(tag => tag.trim() !== "")
     });
 
-    // Reset form state
     setSelectedType("");
     setTitle("");
     setLink("");
@@ -104,30 +94,40 @@ const CreateContentModel = ({ open, onClose, isDarkMode, onSubmit }: CreateConte
     return type.charAt(0).toUpperCase() + type.slice(1);
   };
 
-  if (!open) {
-    return null;
-  }
+  if (!open && !isAnimating) return null;
 
   return (
-    <div className={`fixed inset-0 backdrop-blur-sm flex justify-center items-center z-50 ${isDarkMode ? 'bg-black/30' : 'bg-white/30'}`} onClick={onClose}>
+    <div 
+      className={`fixed inset-0 z-50 flex justify-center items-center p-4 transition-all duration-300 ${
+        isAnimating ? 'opacity-100 backdrop-blur-md' : 'opacity-0 backdrop-blur-none'
+      } ${isDarkMode ? 'bg-black/40' : 'bg-black/20'}`} 
+      onClick={onClose}
+    >
       <div 
-        className={`rounded-2xl shadow-lg w-full max-w-xl p-6 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}
+        className={`w-full max-w-lg p-8 rounded-[2rem] border shadow-[0_20px_60px_rgb(0,0,0,0.2)] transition-all duration-300 transform ${
+          isAnimating ? 'translate-y-0 scale-100' : 'translate-y-8 scale-95'
+        } ${
+          isDarkMode 
+            ? 'bg-[#1C1C1E]/80 backdrop-blur-3xl border-white/10 text-[#F5F5F7]' 
+            : 'bg-white/80 backdrop-blur-3xl border-white/40 text-[#1D1D1F]'
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Create Content</h2>
-          <button onClick={onClose}>
-            <CrossIcon 
-              size="md"
-              color={isDarkMode ? 'ffffff' : '000000'}  
-            />
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold tracking-tight">Create Content</h2>
+          <button 
+            onClick={onClose}
+            className={`p-2 rounded-full transition-colors ${
+              isDarkMode ? 'hover:bg-white/10 text-[#86868B]' : 'hover:bg-black/5 text-[#86868B]'
+            }`}
+          >
+            <CrossIcon size="md" color="currentColor" />
           </button>
         </div>
 
-        <div className="space-y-4">
-          {/* Content Type Dropdown */}
+        <div className="space-y-5">
           <div>
-            <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Content Type *</label>
+            <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-[#A1A1A6]' : 'text-[#86868B]'}`}>Content Type</label>
             <Dropdown
               value={selectedType}
               onChange={setSelectedType}
@@ -135,16 +135,15 @@ const CreateContentModel = ({ open, onClose, isDarkMode, onSubmit }: CreateConte
                 value: type,
                 label: formatTypeName(type)
               }))}
-              placeholder="Select content type"
+              placeholder="Select what you're saving..."
               isDarkMode={isDarkMode}
             />
           </div>
           
-          {/* Title Input */}
           <div>
-            <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Title *</label>
+            <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-[#A1A1A6]' : 'text-[#86868B]'}`}>Title</label>
             <Input 
-              placeholder="Enter title" 
+              placeholder="Enter a descriptive title" 
               value={title}
               onChange={(value) => setTitle(value)} 
               isDarkMode={isDarkMode}
@@ -153,9 +152,9 @@ const CreateContentModel = ({ open, onClose, isDarkMode, onSubmit }: CreateConte
 
           {selectedType === "link" && (
             <div>
-              <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Link *</label>
+              <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-[#A1A1A6]' : 'text-[#86868B]'}`}>URL</label>
               <Input 
-                placeholder="https://example.com" 
+                placeholder="https://" 
                 value={link}
                 onChange={(value) => setLink(value)}  
                 isDarkMode={isDarkMode}
@@ -165,49 +164,57 @@ const CreateContentModel = ({ open, onClose, isDarkMode, onSubmit }: CreateConte
     
           {selectedType && selectedType !== "link" && (
             <div>
-              <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Note *</label>
+              <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-[#A1A1A6]' : 'text-[#86868B]'}`}>Note / Content</label>
               <textarea
-                placeholder="Enter note here..."
+                placeholder="Write your thoughts down..."
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                className={`w-full border p-2 rounded-md min-h-[100px] resize-y ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
+                className={`w-full px-4 py-3 rounded-2xl min-h-[120px] resize-y focus:outline-none focus:ring-2 transition-all duration-200 ${
+                  isDarkMode 
+                    ? 'bg-white/5 border border-white/5 text-[#F5F5F7] placeholder-[#86868B] focus:bg-[#2C2C2E] focus:ring-[#0A84FF] focus:border-transparent' 
+                    : 'bg-black/5 border border-transparent text-[#1D1D1F] placeholder-[#86868B] focus:bg-white focus:ring-[#0066CC] focus:border-transparent shadow-inner'
+                }`}
               />
             </div>
           )}
     
-          {/* Tags Input */}
           <div>
-            <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Tags</label>
-            <div className="flex gap-2 mb-2">
+            <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-[#A1A1A6]' : 'text-[#86868B]'}`}>Tags</label>
+            <div className="flex gap-2 mb-3">
               <Input 
-                placeholder="Add tag and press Enter" 
+                placeholder="Add a tag..." 
                 value={currentTag}
                 onChange={(value) => setCurrentTag(value)}
                 onKeyPress={handleKeyPress}
                 isDarkMode={isDarkMode}
               />
-              <Button
-                variant="secondary"
-                size="sm"
-                innerText="Add"
+              <button
                 onClick={addTag}
-              />
+                className={`px-4 py-2 font-semibold rounded-xl transition-all duration-200 active:scale-95 ${
+                  isDarkMode 
+                    ? 'bg-white/10 hover:bg-white/20 text-[#F5F5F7]' 
+                    : 'bg-black/5 hover:bg-black/10 text-[#1D1D1F]'
+                }`}
+              >
+                Add
+              </button>
             </div>
             
-            {/* Display Tags */}
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag, index) => (
                   <span 
                     key={index}
-                    className={`${getTagColor(index)} px-3 py-1 rounded-full text-sm border flex items-center gap-2 font-medium`}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-2 transition-colors ${
+                      isDarkMode 
+                        ? 'bg-[#0A84FF]/10 text-[#0A84FF] border border-[#0A84FF]/20' 
+                        : 'bg-[#0066CC]/10 text-[#0066CC] border border-[#0066CC]/20'
+                    }`}
                   >
-                    <span className="truncate max-w-[200px]" title={tag}>
-                      {tag}
-                    </span>
+                    <span className="truncate max-w-[150px]">{tag}</span>
                     <button 
                       onClick={() => removeTag(tag)}
-                      className="hover:opacity-70 font-bold text-lg leading-none"
+                      className="hover:opacity-60 font-bold transition-opacity"
                     >
                       &times;
                     </button>
@@ -217,32 +224,34 @@ const CreateContentModel = ({ open, onClose, isDarkMode, onSubmit }: CreateConte
             )}
           </div>
     
-          <div className="flex justify-end mt-6">
-            <Button
-              variant="primary"
-              size="sm"
-              innerText="Create Content"
-              icon={<AddIcon size='md' color="#fff"/>}
-              onClick={handleSubmit}
-            />
-          </div>
-    
-          {/* Error Messages */}
           {errors.length > 0 && (
-            <div className="mt-4 p-3 bg-red-100 border border-red-300 rounded-md">
-              <div className="text-red-700 text-sm space-y-1 font-medium">
+            <div className={`mt-4 p-4 rounded-2xl border ${
+              isDarkMode ? 'bg-red-500/10 border-red-500/20' : 'bg-red-50 border-red-100'
+            }`}>
+              <div className={`text-sm space-y-1 font-medium ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
                 {errors.map((error, index) => (
-                  <div key={index}>- {error}</div>
+                  <div key={index}>• {error}</div>
                 ))}
               </div>
             </div>
           )}
+
+          <div className="flex justify-end pt-4">
+            <button
+              onClick={handleSubmit}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-95 text-white ${
+                isDarkMode ? 'bg-[#0A84FF] hover:bg-[#007AFF]' : 'bg-[#0066CC] hover:bg-[#005BB5]'
+              }`}
+            >
+              <AddIcon size='md' color="#fff"/>
+              Save Content
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
 
 interface InputProps {
   onChange: (value: string) => void;
@@ -253,55 +262,62 @@ interface InputProps {
 }
 
 function Input({ onChange, placeholder, value, onKeyPress, isDarkMode }: InputProps) {
-  // 2. Add conditional styling
   const themeClasses = isDarkMode 
-    ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400" 
-    : "bg-white border-gray-300 text-black";
+    ? "bg-white/5 border-white/5 text-[#F5F5F7] placeholder-[#86868B] focus:bg-[#2C2C2E] focus:ring-[#0A84FF] focus:border-transparent" 
+    : "bg-black/5 border-transparent text-[#1D1D1F] placeholder-[#86868B] focus:bg-white focus:ring-[#0066CC] focus:border-transparent shadow-inner";
 
   return (
-    <input
-      type="text"
-      placeholder={placeholder}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      onKeyPress={onKeyPress}
-      className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${themeClasses}`}
-    />
+    <div className="relative w-full">
+      <input
+        type="text"
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onKeyPress={onKeyPress}
+        className={`w-full px-4 py-3 border rounded-2xl focus:outline-none focus:ring-2 transition-all duration-200 ${themeClasses}`}
+      />
+    </div>
   );
 }
 
-// Dropdown component
 interface DropdownProps<T = string> {
   value: T;
   onChange: (value: T) => void;
   options: { value: T; label: string }[];
   placeholder: string;
-  isDarkMode: boolean; // 1. Add isDarkMode to props
+  isDarkMode: boolean;
 }
 
 function Dropdown<T extends string>({ value, onChange, options, placeholder, isDarkMode }: DropdownProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
 
-  // 2. Add conditional styling for the button and panel
-  const buttonThemeClasses = isDarkMode ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300";
-  const panelThemeClasses = isDarkMode ? "bg-gray-800 border-gray-600" : "bg-white border-gray-200";
-  const optionThemeClasses = isDarkMode ? "text-white hover:bg-gray-700" : "text-gray-900 hover:bg-gray-100";
+  const buttonThemeClasses = isDarkMode 
+    ? "bg-white/5 border-white/5 text-[#F5F5F7] focus:bg-[#2C2C2E] focus:ring-[#0A84FF]" 
+    : "bg-black/5 border-transparent text-[#1D1D1F] focus:bg-white focus:ring-[#0066CC] shadow-inner";
+  
+  const panelThemeClasses = isDarkMode 
+    ? "bg-[#2C2C2E]/90 backdrop-blur-xl border-[#3A3A3C] shadow-black/50" 
+    : "bg-white/90 backdrop-blur-xl border-black/5 shadow-black/10";
+    
+  const optionThemeClasses = isDarkMode 
+    ? "text-[#F5F5F7] hover:bg-[#0A84FF] hover:text-white" 
+    : "text-[#1D1D1F] hover:bg-[#0066CC] hover:text-white";
 
   return (
     <div className="relative">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full px-4 py-2 border rounded-md text-left focus:outline-none focus:ring-2 focus:ring-blue-500 flex justify-between items-center ${buttonThemeClasses}`}
+        className={`w-full px-4 py-3 border rounded-2xl text-left focus:outline-none focus:ring-2 transition-all duration-200 flex justify-between items-center ${buttonThemeClasses}`}
       >
-        <span className={value ? (isDarkMode ? "text-white" : "text-gray-900") : "text-gray-500"}>
+        <span className={value ? "" : "text-[#86868B]"}>
           {value ? options.find(opt => opt.value === value)?.label : placeholder}
         </span>
-        <ChevronDownIcon size="sm" />
+        <ChevronDownIcon size="sm" color={isDarkMode ? '#86868B' : '#86868B'} />
       </button>
 
       {isOpen && (
-        <div className={`absolute z-10 w-full mt-1 border rounded-md shadow-lg max-h-60 overflow-auto ${panelThemeClasses}`}>
+        <div className={`absolute z-20 w-full mt-2 border rounded-2xl shadow-xl overflow-hidden py-1 ${panelThemeClasses}`}>
           {options.map((option) => (
             <button
               key={option.value}
@@ -310,7 +326,7 @@ function Dropdown<T extends string>({ value, onChange, options, placeholder, isD
                 onChange(option.value);
                 setIsOpen(false);
               }}
-              className={`w-full px-4 py-2 text-left focus:outline-none ${optionThemeClasses}`}
+              className={`w-full px-4 py-2.5 text-left font-medium text-sm focus:outline-none transition-colors ${optionThemeClasses}`}
             >
               {option.label}
             </button>
