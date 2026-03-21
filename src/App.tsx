@@ -6,6 +6,7 @@ import AuthPages from './pages/authPage'
 import LandingPage from "./pages/landingPage"
 import NotFoundPage from "./pages/notFoundPage"
 import AboutPage from "./pages/aboutPage"
+import SharedContentPage from "./pages/sharedContent";
 import ProtectedRouter from "./components/ProtectedRoute"
 import './App.css'
 
@@ -18,7 +19,7 @@ function App() {
   return (
     <BrowserRouter>
       <Toaster 
-        position="bottom-center"
+        position="bottom-right"
         toastOptions={{
           style: {
             background: isDarkMode ? 'rgba(28, 28, 30, 0.8)' : 'rgba(255, 255, 255, 0.8)',
@@ -52,6 +53,7 @@ function App() {
         <Route path="/login" element={<AuthPages isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />} />
         <Route path="/" element={<LandingPage isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />} />
         <Route path="/about" element={<AboutPage isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />} />
+        <Route path="/content/:shareId" element={<SharedContentPage isDarkMode={isDarkMode} />} />
         <Route path="*" element={<NotFoundPage />} />
 
         {/* --- Protected Routes --- */}
