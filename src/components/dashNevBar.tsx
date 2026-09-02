@@ -28,15 +28,6 @@ const DashNavigation: React.FC<NavigationProps> = ({ isDarkMode, toggleDarkMode,
         </div>
 
         <div className="flex items-center gap-1 md:gap-2">
-          <button
-            className={`font-medium px-4 py-2 rounded-full transition-colors duration-200 text-sm md:text-base ${
-              isDarkMode 
-                ? 'hover:bg-white/10 text-[#A1A1A6] hover:text-[#F5F5F7]' 
-                : 'hover:bg-black/5 text-[#86868B] hover:text-[#1D1D1F]'
-            }`}
-          >
-            Share
-          </button>
 
           <button
             className={`p-2 rounded-full transition-colors duration-200 ${

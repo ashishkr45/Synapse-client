@@ -1,4 +1,13 @@
-import { Video, Reel, XIcon, LinkedInIcon, PinterestIcon, ShareIcon, DeleteIcon, Links, } from "../../icons/Icons"
+import {
+  Video,
+  Reel,
+  XIcon,
+  LinkedInIcon,
+  PinterestIcon,
+  ShareIcon,
+  DeleteIcon,
+  Links,
+} from "../../icons/Icons";
 import { CardProps } from "./spaceCard";
 import {
   YouTubeEmbed,
@@ -62,11 +71,10 @@ const getMediaConfig = (mediaType: MediaType) => {
   }
 };
 
-// 🧠 Embeds with clickable wrappers
 const renderEmbed = (
   mediaType: MediaType,
   url: string | undefined,
-  unavailableText: string
+  unavailableText: string,
 ) => {
   if (!url) {
     return (
@@ -128,7 +136,7 @@ const renderEmbed = (
           <div style={embedDiv}>
             <YouTubeEmbed {...embedProps} />
           </div>
-        </div>
+        </div>,
       );
 
     case "instagram":
@@ -148,7 +156,7 @@ const renderEmbed = (
           >
             <InstagramEmbed {...embedProps} height="100%" />
           </div>
-        </div>
+        </div>,
       );
 
     case "twitter":
@@ -166,7 +174,7 @@ const renderEmbed = (
           >
             <XEmbed {...embedProps} />
           </div>
-        </div>
+        </div>,
       );
 
     case "linkedin":
@@ -175,7 +183,7 @@ const renderEmbed = (
           <div style={embedDiv}>
             <LinkedInEmbed {...embedProps} />
           </div>
-        </div>
+        </div>,
       );
 
     case "pinterest":
@@ -184,7 +192,7 @@ const renderEmbed = (
           <div style={embedDiv}>
             <PinterestEmbed {...embedProps} />
           </div>
-        </div>
+        </div>,
       );
 
     default:
@@ -198,8 +206,11 @@ const renderEmbed = (
 
 export const MediaEmbedCard = (props: MediaCardProps) => {
   const { title, tags, time, url, mediaType, isDarkMode, onDelete } = props;
-  const { icon: IconComponent, iconBg, unavailableText } =
-    getMediaConfig(mediaType);
+  const {
+    icon: IconComponent,
+    iconBg,
+    unavailableText,
+  } = getMediaConfig(mediaType);
 
   const getTagColor = (index: number, isDarkMode: boolean) => {
     const colors = isDarkMode ? darkPastelColors : lightPastelColors;
@@ -212,7 +223,7 @@ export const MediaEmbedCard = (props: MediaCardProps) => {
         isDarkMode
           ? "bg-gray-800/30 border-gray-900"
           : "bg-white border-gray-200"
-      } break-inside-avoid rounded-xl border shadow-sm hover:shadow-2xl transition-all duration-300 w-full mb-4`}
+      } break-inside-avoid rounded-xl border hover:shadow-2xl transition-all duration-300 shadow-md w-full mb-4`}
     >
       <div className="p-2">
         {/* Header */}
@@ -234,9 +245,10 @@ export const MediaEmbedCard = (props: MediaCardProps) => {
           <div className="flex items-center gap-1 flex-shrink-0">
             <button
               className={`p-1.5 rounded transition-all duration-200 flex items-center justify-center
-                ${isDarkMode
-                  ? "hover:bg-gray-700/50 hover:scale-110 hover:text-gray-100"
-                  : "hover:bg-gray-200 hover:scale-110 hover:text-gray-900"
+                ${
+                  isDarkMode
+                    ? "hover:bg-gray-700/50 hover:scale-110 hover:text-gray-100"
+                    : "hover:bg-gray-200 hover:scale-110 hover:text-gray-900"
                 }`}
             >
               <ShareIcon size="md" color={isDarkMode ? "#d1d5db" : "#646b76"} />
@@ -245,12 +257,16 @@ export const MediaEmbedCard = (props: MediaCardProps) => {
             <button
               onClick={onDelete}
               className={`p-1.5 rounded transition-all duration-200 flex items-center justify-center
-                ${isDarkMode
-                  ? "hover:bg-red-900/40 hover:scale-110 hover:text-red-400"
-                  : "hover:bg-red-100 hover:scale-110 hover:text-red-600"
+                ${
+                  isDarkMode
+                    ? "hover:bg-red-900/40 hover:scale-110 hover:text-red-400"
+                    : "hover:bg-red-100 hover:scale-110 hover:text-red-600"
                 }`}
             >
-              <DeleteIcon size="md" color={isDarkMode ? "#d1d5db" : "#646b76"} />
+              <DeleteIcon
+                size="md"
+                color={isDarkMode ? "#d1d5db" : "#646b76"}
+              />
             </button>
           </div>
         </div>
@@ -271,7 +287,7 @@ export const MediaEmbedCard = (props: MediaCardProps) => {
                   key={index}
                   className={`${getTagColor(
                     index,
-                    isDarkMode
+                    isDarkMode,
                   )} px-2 py-0.5 rounded-2xl text-xs font-medium`}
                 >
                   {tag}

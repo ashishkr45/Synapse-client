@@ -168,7 +168,7 @@ const DefaultCard = ({
         isDarkMode
           ? "bg-gray-800/30 border-slate-900 text-gray-50"
           : "bg-white border-gray-200 text-gray-900"
-      } break-inside-avoid rounded-xl border shadow-sm hover:shadow-2xl transition-all duration-300 w-full mb-4`}
+      } break-inside-avoid rounded-xl border hover:shadow-2xl transition-all duration-300 shadow-md w-full mb-4`}
     >
       <div className="p-4">
         

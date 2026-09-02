@@ -36,8 +36,9 @@ export const extractEmbedType = (url: string): string | null => {
     }
 
     return null;
-  } catch (err) {
+  } catch {
     console.warn("Invalid URL provided:", url);
     return null;
   }
 };
+

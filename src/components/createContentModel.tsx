@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { CrossIcon, AddIcon, ChevronDownIcon } from "../icons/Icons";
 import { z } from "zod";
-import { ContentFormData } from "../pages/dashboard";
+import { ContentFormData } from "../utility/contentApi";
 
 interface CreateContentModelProps {
   open: boolean;
@@ -100,7 +100,7 @@ const CreateContentModel = ({ open, onClose, isDarkMode, onSubmit }: CreateConte
     <div 
       className={`fixed inset-0 z-50 flex justify-center items-center p-4 transition-all duration-300 ${
         isAnimating ? 'opacity-100 backdrop-blur-md' : 'opacity-0 backdrop-blur-none'
-      } ${isDarkMode ? 'bg-black/40' : 'bg-black/20'}`} 
+      } ${isDarkMode ? 'bg-black/10' : 'bg-black/20'}`} 
       onClick={onClose}
     >
       <div 

@@ -27,7 +27,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
     <div className={`
       ${isDarkMode ? 'bg-slate-800/40' : 'bg-white/60'} backdrop-blur-sm rounded-2xl border-2 border-slate-400
       ${sizeClasses[size]} h-auto w-full 
-      transition-all duration-100 hover:border-3 hover:border-blue-500
+      transition-all duration-100 hover:border-3 hover:border-blue-500 shadow-md
     `}>
       {/* Icon */}
       <div className="flex justify-center mb-3 sm:mb-4">

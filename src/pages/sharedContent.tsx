@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { shareContent } from "../utility/contentApi";
+import { shareContent, ContentTag } from "../utility/contentApi";
 import { Card } from "../components/ui/spaceCard";
 import SecBrainIcon from "../icons/SecBrainIcon";
 
@@ -75,7 +75,7 @@ export default function SharedContentPage({ isDarkMode }: SharedContentProps) {
               <Card
                 type={content.type}
                 title={content.title}
-                tags={content.tags.map((tag: any) => tag.title)}
+                tags={content.tags.map((tag: ContentTag) => tag.title)}
                 time={new Date(content.createdAt)}
                 notes={content.note}
                 url={content.link}
@@ -88,3 +88,4 @@ export default function SharedContentPage({ isDarkMode }: SharedContentProps) {
     </div>
   );
 }
+

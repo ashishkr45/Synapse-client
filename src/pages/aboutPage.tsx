@@ -16,7 +16,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ isDarkMode, toggleDarkMode }) => 
       <Navigation isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
       <main className="flex-grow flex items-center justify-center px-6 py-24">
         
-        <div className={`max-w-2xl w-full rounded-[2.5rem] p-10 md:p-14 transition-all duration-300 ${
+        <div className={`max-w-2xl w-full rounded-[2.5rem] p-10 md:p-14 transition-all duration-300 shadow-xl ${
           isDarkMode 
             ? 'bg-[#1C1C1E]/80 backdrop-blur-xl' 
             : 'bg-white/70 backdrop-blur-xl'

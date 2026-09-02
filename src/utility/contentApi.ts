@@ -15,7 +15,34 @@ export const contentFormSchema = z.object({
 
 export type ContentFormData = z.infer<typeof contentFormSchema>;
 
-export const fetchUserContent = async () => {
+export type ContentType =
+  | "link"
+  | "document"
+  | "code"
+  | "note"
+  | "quote"
+  | "event"
+  | "bookmark";
+
+export interface ContentTag {
+  title: string;
+}
+
+export interface ContentItem {
+  _id: string;
+  type: ContentType;
+  title: string;
+  tags: ContentTag[];
+  createdAt: string;
+  note?: string;
+  link?: string;
+}
+
+export interface ShareContentResponse extends ContentItem {
+  shareLink?: string;
+}
+
+export const fetchUserContent = async (): Promise<ContentItem[]> => {
   const response = await api.get('/content/board');
   return response.data.content;
 };
@@ -30,7 +57,8 @@ export const deleteContent = async (id: string) => {
   return response.data;
 };
 
-export const shareContent = async (contentId: string) => {
+export const shareContent = async (contentId: string): Promise<ShareContentResponse> => {
   const response = await api.post('/content/share', { contentId });
   return response.data;
 };
+

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { fetchUserContent, createNewContent, deleteContent, shareContent, ContentFormData } from '../utility/contentApi';
+import { fetchUserContent, createNewContent, deleteContent, shareContent, ContentFormData, ContentItem } from '../utility/contentApi';
 
 import { Card } from '../components/ui/spaceCard';
 import CreateContentModel from '../components/createContentModel';
@@ -12,6 +12,14 @@ import { DeleteConfirmationModal } from '../components/ui/deleteConfirmationMode
 interface DashboardProps {
   isDarkMode: boolean;
   toggleDarkMode: () => void;
+}
+
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
 }
 
 function Dashboard({ isDarkMode, toggleDarkMode }: DashboardProps) {
@@ -68,9 +76,9 @@ function Dashboard({ isDarkMode, toggleDarkMode }: DashboardProps) {
       const fullShareUrl = `${window.location.origin}${data.shareLink}`;
             await navigator.clipboard.writeText(fullShareUrl);
       toast.success("Link copied to clipboard!");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("SHARE ERROR:", error);
-      toast.error(error.response?.data?.message || "Failed to generate link");
+      toast.error((error as ApiError).response?.data?.message || "Failed to generate link");
     }
   };
 
@@ -131,7 +139,7 @@ function Dashboard({ isDarkMode, toggleDarkMode }: DashboardProps) {
 
         {content && content.length > 0 && (
           <div className='columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 max-w-[95%] mx-auto'>
-            {content.map((item: any) => (
+            {content.map((item: ContentItem) => (
               <div 
                 key={item._id}
                 className="break-inside-avoid mb-4"
@@ -145,7 +153,7 @@ function Dashboard({ isDarkMode, toggleDarkMode }: DashboardProps) {
                 <Card
                   type={item.type}
                   title={item.title}
-                  tags={item.tags.map((tag: any) => tag.title)}
+                  tags={item.tags.map((tag) => tag.title)}
                   time={new Date(item.createdAt)}
                   notes={item.note}
                   url={item.link}
@@ -163,3 +171,5 @@ function Dashboard({ isDarkMode, toggleDarkMode }: DashboardProps) {
 }
 
 export default Dashboard;
+
+
