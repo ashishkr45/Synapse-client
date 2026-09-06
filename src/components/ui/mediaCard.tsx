@@ -9,13 +9,6 @@ import {
   Links,
 } from "../../icons/Icons";
 import { CardProps } from "./spaceCard";
-import {
-  YouTubeEmbed,
-  InstagramEmbed,
-  XEmbed,
-  LinkedInEmbed,
-  PinterestEmbed,
-} from "react-social-media-embed";
 import { lightPastelColors, darkPastelColors } from "./spaceCard";
 
 export type MediaType =
@@ -71,11 +64,7 @@ const getMediaConfig = (mediaType: MediaType) => {
   }
 };
 
-const renderEmbed = (
-  mediaType: MediaType,
-  url: string | undefined,
-  unavailableText: string,
-) => {
+const renderMediaLink = (url: string | undefined, unavailableText: string) => {
   if (!url) {
     return (
       <div className="text-gray-400 text-xs text-center py-8 bg-gray-50 rounded-md">
@@ -84,135 +73,34 @@ const renderEmbed = (
     );
   }
 
-  const embedDiv = {
-    position: "relative" as const,
-    zIndex: 1,
-    overflow: "hidden",
-    pointerEvents: "none" as const,
-    width: "100%",
-  };
-
-  const embedProps = {
-    url,
-    width: "100%",
-    height: "auto",
-  };
-
-  if (mediaType === "generic") {
-    return (
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition-all duration-300"
-      >
-        <div className="flex items-center gap-3">
-          <Links size="md" color="#6b7280" />
-          <span className="truncate text-sm text-gray-600 dark:text-gray-300">
-            {url}
-          </span>
-        </div>
-      </a>
-    );
-  }
-
-  // Otherwise render embed wrapped in a clickable <a>
-  const embedWrapper = (embed: React.ReactNode) => (
+  return (
     <a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="block relative group"
+      className="block bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition-all duration-300"
     >
-      <div className="absolute inset-0 z-10 bg-transparent group-hover:bg-black/10 transition-all" />
-      {embed}
+      <div className="flex items-center gap-3">
+        <Links size="md" color="#6b7280" />
+        <span className="truncate text-sm text-gray-600 dark:text-gray-300">
+          {url}
+        </span>
+      </div>
     </a>
   );
-
-  switch (mediaType) {
-    case "youtube":
-      return embedWrapper(
-        <div className="rounded-md overflow-hidden bg-gray-100 w-full">
-          <div style={embedDiv}>
-            <YouTubeEmbed {...embedProps} />
-          </div>
-        </div>,
-      );
-
-    case "instagram":
-      return embedWrapper(
-        <div className="rounded-md overflow-hidden bg-gray-100 w-full">
-          <div
-            style={{
-              ...embedDiv,
-              height: "370px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              overflow: "hidden",
-              transform: "scale(2)",
-              transformOrigin: "center center",
-            }}
-          >
-            <InstagramEmbed {...embedProps} height="100%" />
-          </div>
-        </div>,
-      );
-
-    case "twitter":
-      return embedWrapper(
-        <div className="rounded-md overflow-hidden bg-gray-100 w-full">
-          <div
-            style={{
-              ...embedDiv,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              overflow: "hidden",
-              transformOrigin: "center center",
-            }}
-          >
-            <XEmbed {...embedProps} />
-          </div>
-        </div>,
-      );
-
-    case "linkedin":
-      return embedWrapper(
-        <div className="rounded-md overflow-hidden bg-gray-100 w-full">
-          <div style={embedDiv}>
-            <LinkedInEmbed {...embedProps} />
-          </div>
-        </div>,
-      );
-
-    case "pinterest":
-      return embedWrapper(
-        <div className="rounded-md overflow-hidden bg-gray-100 w-full">
-          <div style={embedDiv}>
-            <PinterestEmbed {...embedProps} />
-          </div>
-        </div>,
-      );
-
-    default:
-      return (
-        <div className="text-gray-400 text-xs text-center py-8 bg-gray-50 rounded-md">
-          {unavailableText}
-        </div>
-      );
-  }
 };
 
 export const MediaEmbedCard = (props: MediaCardProps) => {
-  const { title, tags, time, url, mediaType, isDarkMode, onDelete } = props;
+  const { title, tags, time, url, mediaType, isDarkMode, onDelete, onShare } =
+    props;
+
   const {
     icon: IconComponent,
     iconBg,
     unavailableText,
   } = getMediaConfig(mediaType);
 
-  const getTagColor = (index: number, isDarkMode: boolean) => {
+  const getTagColor = (index: number) => {
     const colors = isDarkMode ? darkPastelColors : lightPastelColors;
     return colors[index % colors.length];
   };
@@ -226,7 +114,6 @@ export const MediaEmbedCard = (props: MediaCardProps) => {
       } break-inside-avoid rounded-xl border hover:shadow-2xl transition-all duration-300 shadow-md w-full mb-4`}
     >
       <div className="p-2">
-        {/* Header */}
         <div className="flex justify-between mb-3">
           <div className="flex gap-2 flex-1 min-w-0 pr-2">
             <div
@@ -234,6 +121,7 @@ export const MediaEmbedCard = (props: MediaCardProps) => {
             >
               <IconComponent size="md" color="#ffffff" />
             </div>
+
             <span
               className={`${
                 isDarkMode ? "text-gray-50" : "text-gray-900"
@@ -242,26 +130,28 @@ export const MediaEmbedCard = (props: MediaCardProps) => {
               {title}
             </span>
           </div>
+
           <div className="flex items-center gap-1 flex-shrink-0">
             <button
-              className={`p-1.5 rounded transition-all duration-200 flex items-center justify-center
-                ${
-                  isDarkMode
-                    ? "hover:bg-gray-700/50 hover:scale-110 hover:text-gray-100"
-                    : "hover:bg-gray-200 hover:scale-110 hover:text-gray-900"
-                }`}
+              type="button"
+              onClick={onShare}
+              className={`p-1.5 rounded transition-all duration-200 flex items-center justify-center ${
+                isDarkMode
+                  ? "hover:bg-gray-700/50 hover:scale-110 hover:text-gray-100"
+                  : "hover:bg-gray-200 hover:scale-110 hover:text-gray-900"
+              }`}
             >
               <ShareIcon size="md" color={isDarkMode ? "#d1d5db" : "#646b76"} />
             </button>
 
             <button
+              type="button"
               onClick={onDelete}
-              className={`p-1.5 rounded transition-all duration-200 flex items-center justify-center
-                ${
-                  isDarkMode
-                    ? "hover:bg-red-900/40 hover:scale-110 hover:text-red-400"
-                    : "hover:bg-red-100 hover:scale-110 hover:text-red-600"
-                }`}
+              className={`p-1.5 rounded transition-all duration-200 flex items-center justify-center ${
+                isDarkMode
+                  ? "hover:bg-red-900/40 hover:scale-110 hover:text-red-400"
+                  : "hover:bg-red-100 hover:scale-110 hover:text-red-600"
+              }`}
             >
               <DeleteIcon
                 size="md"
@@ -271,14 +161,12 @@ export const MediaEmbedCard = (props: MediaCardProps) => {
           </div>
         </div>
 
-        {/* Embed or generic link */}
         <div className="mb-3 w-full">
           <div className="text-sm overscroll-x-none overflow-hidden rounded-xl">
-            {renderEmbed(mediaType, url, unavailableText)}
+            {renderMediaLink(url, unavailableText)}
           </div>
         </div>
 
-        {/* Footer */}
         <div className="space-y-2">
           {tags && tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
@@ -287,12 +175,12 @@ export const MediaEmbedCard = (props: MediaCardProps) => {
                   key={index}
                   className={`${getTagColor(
                     index,
-                    isDarkMode,
                   )} px-2 py-0.5 rounded-2xl text-xs font-medium`}
                 >
                   {tag}
                 </span>
               ))}
+
               <span
                 className={`${
                   isDarkMode
@@ -314,22 +202,26 @@ export const MediaEmbedCard = (props: MediaCardProps) => {
   );
 };
 
-// Legacy exports
 export const YouTubeCard = (props: CardProps) => (
   <MediaEmbedCard {...props} mediaType="youtube" />
 );
+
 export const ReelsCard = (props: CardProps) => (
   <MediaEmbedCard {...props} mediaType="instagram" />
 );
+
 export const TweetCard = (props: CardProps) => (
   <MediaEmbedCard {...props} mediaType="twitter" />
 );
+
 export const LinkedInCard = (props: CardProps) => (
   <MediaEmbedCard {...props} mediaType="linkedin" />
 );
+
 export const PinterestCard = (props: CardProps) => (
   <MediaEmbedCard {...props} mediaType="pinterest" />
 );
+
 export const GenericLinkCard = (props: CardProps) => (
   <MediaEmbedCard {...props} mediaType="generic" />
 );
