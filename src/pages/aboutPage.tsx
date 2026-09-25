@@ -58,7 +58,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ isDarkMode, toggleDarkMode }) => 
               </a>
               <div className="flex items-center gap-3">
                 <SocialLink href="https://github.com/ashishkr45" icon={<GithubIcon className="w-5 h-5" />} isDarkMode={isDarkMode} />
-                <SocialLink href="https://twitter.com/ashishkr45" icon={<XIcon />} isDarkMode={isDarkMode} />
+                <SocialLink href="https://twitter.com/Ashucifer" icon={<XIcon />} isDarkMode={isDarkMode} />
                 <SocialLink href="https://linkedin.com/in/ashishkr45" icon={<LinkedInIcon />} isDarkMode={isDarkMode} />
               </div>
             </div>
